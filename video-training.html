@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oh Service - Video Training</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #e0e0a0;
+            --secondary: #ffbdc5;
+            --accent: #f5bbb9;
+            --dark: #989a35;
+            --light: #f7f0e6;
+            --gray: #888;
+        }
+        
+        body {
+            background-color: #f7f0e6;
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        .sidebar-nav {
+            flex-grow: 1;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--accent);
+            border-left: 4px solid var(--accent);
+        }
+        
+        .sidebar-link i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .user-section {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .content-header {
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            color: var(--gray);
+            font-size: 16px;
+        }
+       
+        .video-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .video-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            height: 180px;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-thumbnail i {
+            font-size: 50px;
+            color: white;
+            opacity: 0.9;
+        }
+        
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .video-card:hover .play-overlay {
+            opacity: 1;
+        }
+        
+        .video-info {
+            padding: 20px;
+        }
+        
+        .video-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .video-duration {
+            font-size: 14px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+        }
+        
+        .video-duration::before {
+            content: "⏱";
+            margin-right: 5px;
+        }
+        
+       
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-modal-content {
+            width: 90%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; 
+            height: 0;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            font-size: 20px;
+        }
+        
+        
+        @media (max-width: 992px) {
+            .video-cards {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 10px 0;
+                order: 2; 
+                position: fixed;
+                bottom: 0;
+                z-index: 100;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .logo {
+                display: none; 
+            }
+            
+            .sidebar-nav {
+                display: flex;
+                justify-content: space-around;
+            }
+            
+            .sidebar-link {
+                flex-direction: column;
+                padding: 10px 5px;
+                font-size: 12px;
+                border-left: none;
+                border-bottom: 4px solid transparent;
+            }
+            
+            .sidebar-link i {
+                margin-right: 0;
+                margin-bottom: 5px;
+                font-size: 16px;
+            }
+            
+            .sidebar-link:hover, .sidebar-link.active {
+                border-left: none;
+                border-bottom: 4px solid var(--accent);
+            }
+            
+            .user-section {
+                display: none; 
+            }
+            
+            .main-content {
+                padding: 20px;
+                padding-bottom: 80px; 
+            }
+            
+            .video-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+    <aside class="sidebar">
+        <div class="logo">Oh <span>Service</span></div>
+        
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-link">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="video-training.html" class="sidebar-link active">
+                <i class="fas fa-video"></i>
+                <span>Video training</span>
+            </a>
+            <a href="audio-training.html" class="sidebar-link">
+                <i class="fas fa-music"></i>
+                <span>Audio training</span>
+            </a>
+            <a href="account.html" class="sidebar-link">
+                <i class="fas fa-user"></i>
+                <span>Account</span>
+            </a>
+        </nav>
+        
+        <div class="user-section">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-header">
+            <h1 class="page-title">Video Training</h1>
+            <p class="page-subtitle">Learn how to use household appliances with our video tutorials</p>
+        </div>
+
+        <div class="video-cards">
+            <div class="video-card" data-video="https://www.youtube.com/embed/CsuYZxguQek">
+                <div class="video-thumbnail">
+                    <i class="fas fa-washing-machine"></i>
+                    <div class="play-overlay">
+                        <i class="fas fa-play-circle" style="font-size: 60px;"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">How to use washing machine</h3>
+                    <div class="video-duration">5:24</div>
+                </div>
+            </div>
+
+            <div class="video-card" data-video="https://www.youtube.com/embed/GH4I3uCSZB4">
+                <div class="video-thumbnail">
+                    <i class="fas fa-broom"></i>
+                    <div class="play-overlay">
+                        <i class="fas fa-play-circle" style="font-size: 60px;"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">Cleaning after yourself</h3>
+                    <div class="video-duration">7:15</div>
+                </div>
+            </div>
+
+            <div class="video-card" data-video="https://www.youtube.com/embed/6Sbf2DZnoaE">
+                <div class="video-thumbnail">
+                    <i class="fas fa-egg"></i>
+                    <div class="play-overlay">
+                        <i class="fas fa-play-circle" style="font-size: 60px;"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">How to cook a scrambled egg</h3>
+                    <div class="video-duration">4:38</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-content">
+            <div class="video-container" id="videoPlayer">
+               
+            </div>
+            <div class="close-modal" id="closeModal">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const videoUrl = this.getAttribute('data-video');
+                const videoModal = document.getElementById('videoModal');
+                const videoPlayer = document.getElementById('videoPlayer');
+                
+                videoPlayer.innerHTML = `<iframe src="${videoUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                
+                videoModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; 
+            });
+        });
+
+        document.getElementById('closeModal').addEventListener('click', function() {
+            const videoModal = document.getElementById('videoModal');
+            const videoPlayer = document.getElementById('videoPlayer');
+            
+            videoModal.style.display = 'none';
+            videoPlayer.innerHTML = '';
+            document.body.style.overflow = 'auto'; 
+        });
+
+        document.getElementById('videoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                const videoModal = document.getElementById('videoModal');
+                const videoPlayer = document.getElementById('videoPlayer');
+                
+                videoModal.style.display = 'none';
+                videoPlayer.innerHTML = '';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.video-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+    </script>
+</body>
+</html>
